@@ -1,48 +1,61 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Boo.Lang;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Spike : MonoBehaviour {
 
-    public float damage;
-	public float damageRate;
-	public float pushBackForce;
+   [SerializeField] private float damage;
+   [SerializeField] private float damageRate;
+   [SerializeField] private float pushBackForce = 10f;
 
-	float nextDamage;
+    private IEnumerator damageEnumerator;
+    private static List<Spike> spikesTouched = new List<Spike>();
 
-	// Use this for initialization
-	void Start () {
-		nextDamage = 0f;
+	private void OnTriggerEnter2D(Collider2D other)
+	{
+		if (other.CompareTag("Player"))
+		{
+            spikesTouched.Add(this);
+
+            if(spikesTouched.Count == 1 && damageEnumerator == null)
+            {
+                PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+               
+                if (playerHealth != null) {
+                    damageEnumerator = TakeDamage(playerHealth);
+                    StartCoroutine(damageEnumerator);
+                }
+            }
+        }
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-    // private void OnTriggerEnter2D(Collider2D collision)
-    // {
-        // if(collision.CompareTag("Player"))
-        // {
-        //     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        //     Debug.Log("Die");
-        // }
-    // }
-	void OnTriggerStay2D(Collider2D other){
-		if(other.tag=="Player" && nextDamage<Time.time){
-			PlayerHealth thePlayerHeath = other.gameObject.GetComponent<PlayerHealth>();
-			thePlayerHeath.addDamage(damage);
-			nextDamage = Time.time + damageRate;
 
-			pushBack(other.transform);
-		}
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            spikesTouched.Remove(this);
+        }
+    }
+
+    private IEnumerator TakeDamage(PlayerHealth health)
+	{
+        while (health != null && spikesTouched.Count != 0)
+        {
+            health.addDamage(damage);
+            yield return new WaitForSeconds(0.5f);
+        }
 	}
 
 	void pushBack(Transform pushObject){
-		Vector2 pushDirection = new Vector2(0, (pushObject.position.y - transform.position.y)).normalized;
+		
+        Vector2 pushDirection = new Vector2(0, (pushObject.position.y - transform.position.y)).normalized;
 		pushDirection*=pushBackForce;
 		Rigidbody2D pushRB = pushObject.gameObject.GetComponent<Rigidbody2D>();
-		pushRB.velocity = Vector2.zero;
-		pushRB.AddForce(pushDirection, ForceMode2D.Impulse);
+
+        if (pushRB != null)
+        {
+            pushRB.velocity = Vector2.zero;
+            pushRB.AddForce(pushDirection, ForceMode2D.Impulse);
+        }
 	}
 }

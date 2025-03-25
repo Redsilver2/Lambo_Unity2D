@@ -1,31 +1,28 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(AudioSource))]
 public class PlayerHealth : MonoBehaviour {
-	public float fullHealth;
-	//public GameObject deathFX;
-	float currentHealth;
-	public AudioClip playerHurt;
-	AudioSource playerAS;
+    [SerializeField] private float fullHealth;
+    //public GameObject deathFX;
+    private float currentHealth;
+    [SerializeField] private AudioClip playerHurt;
+	private AudioSource playerAS;
 	// public GameObject gameOverScreen;
-    // public GameManager theGameManager;
+	// public GameManager theGameManager;
 
-	PlayerController playerControl;
+	[Space]
+    [SerializeField] private Slider heartBar;
+    [SerializeField] private Image damageScreen;
 
-	//Player Heart Bar
-	public Slider heartBar;
-	public Image damageScreen;
-	bool damaged = false;
-	Color damagedColour = new Color(5f,5f,0f,0.5f);
-	float smoothColour = 5f;
+    private bool damaged = false;
+	private Color damagedColour = new Color(5f,5f,0f,0.5f);
+    private	float smoothColour = 5f;
 
 	// Use this for initialization
 	void Start () {
 		currentHealth = fullHealth;
-		playerControl = GetComponent<PlayerController>();
 
 		//Heart Bar
 		heartBar.maxValue=fullHealth;

@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class MoveToNextLvl : MonoBehaviour
 {
-    public void OnTriggerEnter2D(Collider2D coll)
+    public void LoadNextLevel()
     {
         int nextLevelToLoad = SceneManager.GetActiveScene().buildIndex + 1;
 
@@ -13,9 +13,6 @@ public class MoveToNextLvl : MonoBehaviour
             return;
         }
 
-        if (nextLevelToLoad > PlayerPrefs.GetInt("levelAt"))
-            PlayerPrefs.SetInt("levelAt", nextLevelToLoad);
-
-        SceneManager.LoadScene(nextLevelToLoad);
+        GameManager.Instance.UnlockAndLoadNextLevel();
     }
 }

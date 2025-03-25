@@ -6,6 +6,6 @@ public class Blade : MonoBehaviour
 
     private void LateUpdate()
     {
-        this.transform.Rotate(Vector3.forward * rotationSpeed);
+        this.transform.Rotate(Time.deltaTime * Vector3.forward * rotationSpeed);
     }
 }

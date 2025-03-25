@@ -118,7 +118,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.07732093, y: -0.05912769}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -129,7 +129,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.44, y: 2.21}
+  m_Size: {x: 1.012461, y: 1.8552339}
   m_EdgeRadius: 0
 --- !u!114 &696879261524208303
 MonoBehaviour:
@@ -143,21 +143,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9054cf9dd1ac23c4abcb019f9343ec69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerMask:
-    serializedVersion: 2
-    m_Bits: 0
   Sword: {fileID: 1796979309485674, guid: 345a8c2b7c62e4f159333ff4f84a36be, type: 3}
   pos_sword: {fileID: 696879262192457446}
-  canMoveInAir: 1
-  speed: 5
-  jumpForce: 15
+  speed: 500
+  jumpForce: 150
   isGrounded: 1
   feetPos: {fileID: 696879263288411731}
   circleRadius: 0.3
   whatIsGround:
     serializedVersion: 2
     m_Bits: 768
-  Scale_karak: 0
 --- !u!114 &696879261524208302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,7 +319,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 696879263288411732}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.01, y: -1.38, z: -0.03606322}
+  m_LocalPosition: {x: 0.01, y: -1.3, z: -0.03606322}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 696879261524208306}

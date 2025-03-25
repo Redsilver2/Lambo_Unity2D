@@ -1,5 +1,6 @@
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelSelection : MonoBehaviour
 {
@@ -7,13 +8,13 @@ public class LevelSelection : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int levelAt = PlayerPrefs.GetInt("levelAt",2);
-        for(int i = 0; i < gameplayLevelButtons.Length; i++)
+        int buildIndex      = SceneManager.GetActiveScene().buildIndex;
+        GameManager manager = GameManager.Instance;
+
+        if (manager != null)
         {
-          if(i + 2 > levelAt)
-          {
-            gameplayLevelButtons[i].interactable = false;
-          }
+            manager.SetLevelButtonsAndAddLevels(gameplayLevelButtons,
+                                                buildIndex, true);
         }
     }
 }

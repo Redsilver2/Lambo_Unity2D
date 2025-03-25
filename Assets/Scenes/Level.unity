@@ -335,18 +335,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 420289631}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 877986293}
-        m_MethodName: levelToLoad
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &420289631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -924,6 +913,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 674767089}
   m_CullTransparentMesh: 0
+--- !u!1001 &729932106
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780839559404330682, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7119174192308106567, guid: 5ee0d726ffa9df540a44068fdbab6b78,
+        type: 3}
+      propertyPath: m_Name
+      value: 'Redsilver2''s GameManager '
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5ee0d726ffa9df540a44068fdbab6b78, type: 3}
 --- !u!1 &793573146
 GameObject:
   m_ObjectHideFlags: 0
@@ -1002,18 +1060,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 793573149}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 877986293}
-        m_MethodName: levelToLoad
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 7
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &793573149
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1127,18 +1174,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 848117294}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 877986293}
-        m_MethodName: levelToLoad
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 5
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &848117294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1205,7 +1241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd9974e35835481c949bc912a286290, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lvlButtons:
+  gameplayLevelButtons:
   - {fileID: 420289630}
   - {fileID: 1590439166}
   - {fileID: 1139675527}
@@ -1250,7 +1286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c073ee0cd9e00d45a329f20975cabb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextSceneLoad: 2
 --- !u!1 &973461662
 GameObject:
   m_ObjectHideFlags: 0
@@ -1329,18 +1364,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 973461665}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 877986293}
-        m_MethodName: levelToLoad
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 6
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &973461665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1612,18 +1636,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1139675528}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 877986293}
-        m_MethodName: levelToLoad
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 4
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1139675528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2226,18 +2239,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1590439167}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 877986293}
-        m_MethodName: levelToLoad
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 3
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1590439167
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,58 +1,47 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Sword : MonoBehaviour {
+	[SerializeField] private float damagesenjata;
+	private Rigidbody2D rigidbody;
+   
+    private float scale_karak;
+    private float lifeTime = 5f;
 
-	public float scale_karak;
-	public float damagesenjata;
-	// Use this for initialization
-	void Start () {
-		scale_karak = GameObject.Find("player").transform.localScale.x;
-	}
+    // Use this for initialization
+    private void Start () {
+		SpriteRenderer renderer = GameObject.Find("player").GetComponent<SpriteRenderer>();
 
-	// Update is called once per frame
-	void Update () {
-			if(scale_karak ==  1f){
-				GetComponent<Rigidbody2D>().velocity = new Vector2(8f, GetComponent<Rigidbody2D>().velocity.y);
-			}
-			else{
-				GetComponent<Rigidbody2D>().velocity = new Vector2(-8f, GetComponent<Rigidbody2D>().velocity.y);
-			}
+        if (renderer != null)
+            if (renderer.flipX)
+                scale_karak = -1f;
+            else
+                scale_karak = 1f;
+        
+        rigidbody = GetComponent<Rigidbody2D>();
+    }
 
+    // Update is called once per frame
+    private void LateUpdate () {
+        rigidbody.velocity = Time.deltaTime * (Vector2.right * 400f * Mathf.Sign(scale_karak) +
+			                  Vector2.up    * rigidbody.velocity.y);
 
-	}
-		void OnTriggerEnter2D(Collider2D coll)
-		{
-			if(coll.gameObject.tag == "Batas"|| coll.gameObject.tag=="Ground")
+        lifeTime -= Time.deltaTime;
+
+        if (lifeTime <= 0)
+            Destroy(gameObject);      
+    }
+
+    private void OnTriggerEnter2D(Collider2D coll)
+    {
+			if(coll.CompareTag("Batas")|| coll.CompareTag("Ground"))
 			{
 				Destroy(gameObject);
 			}
-				if(coll.gameObject.layer == LayerMask.NameToLayer("Enemy")){
-					Destroy(gameObject);
-					if(coll.gameObject.tag =="Enemy"){
-						EnemyHealth hurtenemy = coll.gameObject.GetComponent<EnemyHealth>();
-						hurtenemy.DiDor(damagesenjata);
-					}
-				}
-			
-		}
-		void OnTriggerStay2D(Collider2D coll)
-		{
-			if(coll.gameObject.tag == "Batas"|| coll.gameObject.tag=="Ground")
-			{
-				Destroy(gameObject);
-			}
-				if(coll.gameObject.layer == LayerMask.NameToLayer("Enemy")){
-					Destroy(gameObject);
-					if(coll.gameObject.tag =="Enemy"){
-						EnemyHealth hurtenemy = coll.gameObject.GetComponent<EnemyHealth>();
-						hurtenemy.DiDor(damagesenjata);
-					}
-				}
-			
-		}
-		// public void removeForce(){
-		// 	GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
-		// }
+
+		    if(coll.gameObject.layer == LayerMask.NameToLayer("Enemy") && coll.CompareTag("Enemy")) { 
+			   EnemyHealth enemyHealth = coll.gameObject.GetComponent<EnemyHealth>();
+		       enemyHealth.DiDor(damagesenjata);
+               Destroy(gameObject);
+            }
+    }
 }

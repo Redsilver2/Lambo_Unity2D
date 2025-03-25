@@ -13,9 +13,6 @@ public class PindahLevel : MonoBehaviour
             return;
         }
 
-        if (nextLevelToLoad > PlayerPrefs.GetInt("levelAt"))
-            PlayerPrefs.SetInt("levelAt", nextLevelToLoad);
-
-        SceneManager.LoadScene(nextLevelToLoad);
+        GameManager.Instance.UnlockAndLoadNextLevel();
     }
 }
