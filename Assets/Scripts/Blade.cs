@@ -1,23 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Blade : MonoBehaviour
-
 {
-    public float rotationSpeed;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private float rotationSpeed;
 
-    // Update is called once per frame
-    void FixedUpdate()
+    private void LateUpdate()
     {
-        this.transform.Rotate(new Vector3(0,0, rotationSpeed));
+        this.transform.Rotate(Vector3.forward * rotationSpeed);
     }
-    // void OnTriggerEnter2D(Collider2D collider){
-    //     Destroy(collider.gameObject);
-    // }
 }

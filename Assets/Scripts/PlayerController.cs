@@ -6,15 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    public LayerMask playerMask;
-    public GameObject Sword,pos_sword;
-    public bool canMoveInAir = true;
+    [SerializeField] private LayerMask playerMask;
+    [SerializeField] private GameObject Sword,pos_sword;
+    [SerializeField] private bool canMoveInAir = true;
     // public GameObject gameOverScreen;
     // public GameManager theGameManager;
 
 
-    float fireRate = 0;
-    float nextfire = 0;
+    private float maxFireDelay = 0;
+    private float fireDelay = 0;
     // untuk mengatur kecepatan saat Player bergerak
     [SerializeField] private float speed;
     // untuk komponen Rigidbody2D
@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     //Player saat bergerak ke kanan atau ke kiri
     private float moveInput;
     // Untuk mengkondisikan benar saat Player menghadap ke kanan
-    private bool facingRight;
+    private bool isFacingRight;
 
     // memberikan nilai seberapa tinggi Player dapat melompat
     [SerializeField] private float jumpForce;
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
         //inisialisasi komponen Rigidbody2D yang ada pada Player
         rigidBody = GetComponent<Rigidbody2D>();
         //kita set di awal BENAR karena Player menghadap ke kanan
-        facingRight = true;
+        isFacingRight = true;
         //Inisialisasi komponen Animator yang ada pada Player
         anim = GetComponent<Animator>();
     }
@@ -64,23 +64,20 @@ public class PlayerController : MonoBehaviour
         //Fungsi untuk Player saat melompat
         CharacterJump();
 
-        if(fireRate == 0)
+        if (Input.GetKeyDown(KeyCode.Space) && fireDelay <= 0f)
         {
-
-          if(Input.GetKeyDown(KeyCode.Space))
-          {
             Shooting();
-          }
-          else
-          {
-            if(Input.GetKeyDown(KeyCode.Space) && Time.time > nextfire)
-            {
-              nextfire = Time.time + nextfire;
-              Shooting();
-            }
-          }
+            fireDelay = maxFireDelay;
         }
-        Vector2 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
+
+        if(fireDelay > 0f)
+            fireDelay -= Time.deltaTime;
+        else
+            fireDelay = 0f;
+
+
+
+            Vector2 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
 		if (screenPosition.y > Screen.height || screenPosition.y < 0){
             died();
         }
@@ -91,7 +88,7 @@ public class PlayerController : MonoBehaviour
     {
       if(coll.gameObject.tag == "Batas_Mati")
       {
-        died();
+         died();
       }
     }
 
@@ -119,14 +116,12 @@ public class PlayerController : MonoBehaviour
     }
     public float Scale_karak;
      void Shooting(){
-           if (Scale_karak == 1f){
-            GetComponent<Rigidbody2D>().velocity = new Vector2(8f, GetComponent<Rigidbody2D>().velocity.y);
-        }
-        else{
-            GetComponent<Rigidbody2D>().velocity = new Vector2(-8f, GetComponent<Rigidbody2D>().velocity.y);
-        }
+
+        rigidBody.velocity = Vector2.right * 8f * Mathf.Sign(Scale_karak) +
+                             Vector2.up    * rigidBody.velocity.y;
+
         Instantiate(Sword, pos_sword.transform.position, pos_sword.transform.rotation);
-    }
+     }
     // void OnMousDown (){
 	// 	Instantiate(Sword, pos_sword.transform.position, pos_sword.transform.rotation);
 
@@ -138,21 +133,24 @@ public class PlayerController : MonoBehaviour
         //yang telah di sediakan oleh Unity
         //Untuk melihat keyboard inputannya sobat
         //buka di menu edit terus pilih Project Setting dan pilih Input
+        float sign;
+
         moveInput = Input.GetAxis("Horizontal");
+        sign = Mathf.Sign(moveInput);
 
-        if (moveInput > 0 && facingRight == false)
+        if (sign == 1f && isFacingRight == false)
         {
-
             Flip();
+            isFacingRight = true;
         }
-        else if (moveInput < 0 && facingRight == true)
+        else if (sign == -1f && isFacingRight == true)
         {
-            //Fungsi yang berguna agar Player
-            //dapat menghadap ke kanan atau ke kiri
             Flip();
+            isFacingRight = false;
         }
         // nilai pada sumbu X akan bertambah sesuai dg speed * moveInput
-        rigidBody.velocity = new Vector2(speed * moveInput, rigidBody.velocity.y);
+        rigidBody.velocity = Time.deltaTime * (Vector2.right * speed * moveInput +
+                             Vector2.up     * rigidBody.velocity.y);
     }
 
     void CharacterJump()
@@ -160,46 +158,22 @@ public class PlayerController : MonoBehaviour
 
         if (isGrounded == true &&  Input.GetKeyDown(KeyCode.UpArrow))
         {
-            //Cara memanggil animasi dengan
-            //parameter yang bertipe Trigger
             anim.SetTrigger("isJump");
-            rigidBody.velocity = new Vector2(rigidBody.velocity.x, jumpForce);
+            rigidBody.velocity = Vector2.right * rigidBody.velocity.x + 
+                                 Vector2.up    * jumpForce;
         }
     }
 
     void CharacterAnimation()
     {
-        if (moveInput != 0 && isGrounded == true)
-        {
-            //cara memanggil animasi dengan
-            //parameter yang bertipe BOOL
-            anim.SetBool("isRun", true);
-
-        }
-        else if (moveInput == 0 && isGrounded == true)
-        {
-            anim.SetBool("isRun", false);
-        }
+        if(anim != null)
+            anim.SetBool("isRun", moveInput != 0 && isGrounded == true);
     }
 
     private void Flip()
     {
-        //facingRight bernilai tidak sama dengan facingRight
-        facingRight = !facingRight;
-        //membuat variabel dengan tipe Vector3
-        //yang isinya = transform.localScale
-        //(Scling pada sumbu x=1, y=1,z=1)
-        Vector3 scaler = transform.localScale;
-        //lalu pada sumbu x di kalikan
-        //dengan minus sehingga sumbu x
-        //nantinya akan memiliki nilai minus
-        scaler.x *= -1;
-        //dan terakhir sumbu x pada Player di berikan
-        //nilai minus sehingga ketika Player menghadap
-        //ke kiri sumbu x pada Player akan bernilai -1
-        transform.localScale = scaler;
-
-        //NOTE : Sumbu x ini sumbu x yang ada
-        //pada Scale yang ada pada komponen Transform
+        transform.localScale = Vector3.right   * transform.localScale.x * Mathf.Sign(moveInput) +
+                               Vector3.up      * transform.localScale.y                         +
+                               Vector3.forward * transform.localScale.z;
     }
 }

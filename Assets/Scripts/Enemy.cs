@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy : MonoBehaviour {
  public LayerMask enemyMask;
@@ -40,7 +38,7 @@ public class Enemy : MonoBehaviour {
 			myBody.velocity = myVel;
 	}
 	void OnTriggerEnter2D(Collider2D coll){
-		if(coll.gameObject.name=="fireball"){
+		if(coll.CompareTag("fireball")){
 			Destroy(gameObject);
 		}
 	}
