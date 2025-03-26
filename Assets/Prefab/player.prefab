@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 696879261524208303}
   - component: {fileID: 696879261524208302}
   - component: {fileID: 696879261524208301}
+  - component: {fileID: 3635166220554676312}
   m_Layer: 0
   m_Name: player
   m_TagString: Player
@@ -146,7 +147,7 @@ MonoBehaviour:
   Sword: {fileID: 1796979309485674, guid: 345a8c2b7c62e4f159333ff4f84a36be, type: 3}
   pos_sword: {fileID: 696879262192457446}
   speed: 500
-  jumpForce: 150
+  jumpForce: 200
   isGrounded: 1
   feetPos: {fileID: 696879263288411731}
   circleRadius: 0.3
@@ -265,6 +266,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!50 &3635166220554676312
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696879261524208309}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 0.0001
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 75
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &696879262192457446
 GameObject:
   m_ObjectHideFlags: 0

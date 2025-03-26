@@ -109,8 +109,7 @@ public class PlayerController : MonoBehaviour
             isFlipped = true;
 
         renderer.flipX = isFlipped;
-        rigidBody.velocity = Time.deltaTime * (Vector2.right * speed * moveInput +
-                                               Vector2.down  * speed / 1.5f);
+        rigidBody.velocity = Time.deltaTime * (Vector2.right * speed * moveInput + Vector2.down * 0f);
     }
 
     void CharacterJump()
@@ -118,8 +117,8 @@ public class PlayerController : MonoBehaviour
         if (isGrounded == true && jumpDelay <= 0f && Input.GetKeyDown(KeyCode.UpArrow))
         {
             anim.SetTrigger("isJump");
-            rigidBody.AddForce((Vector2.right   * rigidBody.velocity.x + 
-                                 Vector2.up    * jumpForce), ForceMode2D.Impulse);
+            rigidBody.AddForce(Time.deltaTime * (Vector2.right   * rigidBody.velocity.x + 
+                                 Vector2.up    * jumpForce));
 
             jumpDelay = 1.5f;
         }
