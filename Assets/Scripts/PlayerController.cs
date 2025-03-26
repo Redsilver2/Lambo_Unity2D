@@ -118,8 +118,8 @@ public class PlayerController : MonoBehaviour
         if (isGrounded == true && jumpDelay <= 0f && Input.GetKeyDown(KeyCode.UpArrow))
         {
             anim.SetTrigger("isJump");
-            rigidBody.AddForce(Time.deltaTime * (Vector2.right   * rigidBody.velocity.x + 
-                                 Vector2.up    * jumpForce));
+            rigidBody.AddForce((Vector2.right   * rigidBody.velocity.x + 
+                                 Vector2.up    * jumpForce), ForceMode2D.Impulse);
 
             jumpDelay = 1.5f;
         }

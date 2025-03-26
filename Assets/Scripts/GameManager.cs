@@ -1,13 +1,27 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 [System.Serializable]
+public class LevelNode
+{
+    public LevelNode     next;
+    public GameplayLevel mainLevel;
+    public SecretLevel   secretLevel;
+
+    public LevelNode(GameplayLevel mainLevel, SecretLevel secretLevel)
+    {
+        this.mainLevel   = mainLevel;
+        this.secretLevel = secretLevel;
+    }
+}
+
+[System.Serializable]
 public abstract class LevelUnlocked
 {
-    private int levelIndex;
+    private   int levelIndex;
     protected bool isUnlocked;
 
     public int LevelIndex { get { return levelIndex; } }
@@ -46,10 +60,15 @@ public class GameplayLevel : LevelUnlocked
 
     public override void Unlock()
     {
-        isUnlocked = LevelIndex > PlayerPrefs.GetInt("levelAt", 2);
+        if(PlayerPrefs.GetInt("levelAt") >= LevelIndex)
+        {
+            isUnlocked = true;
+            Debug.Log(PlayerPrefs.GetInt("levelAt"));
+        }
     }
 }
 
+[System.Serializable]
 public class SecretLevel : GameplayLevel
 {
     private int secretLevelRequirement;
@@ -97,7 +116,7 @@ public class SecretLevel : GameplayLevel
 
 public class GameManager : MonoBehaviour
 {
-    private List<LevelUnlocked> levelsUnlocked;
+    private LevelNode defaultLevel;
     private List<int> defaultLevelsUnlocked;
 
     public static GameManager Instance { get; private set; }
@@ -114,14 +133,17 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(Instance);
         }
 
+        if (!PlayerPrefs.HasKey("levelAt"))
+                PlayerPrefs.SetInt("levelAt", 2);
+        else if (PlayerPrefs.GetInt("levelAt") < 2)
+            PlayerPrefs.SetInt("levelAt", 2);
+
         defaultLevelsUnlocked = new List<int>()
         {
             0, 1, 2, 9, 10, 11
         };
 
-        PlayerPrefs.SetInt("levelAt", 0);
         SecretLevel.SetSecretLevelIndex();
-        levelsUnlocked = new List<LevelUnlocked>();
     }
 
     public void SetLevelButtonsAndAddLevels(Button[] buttons, int startIndex, bool isGameplayLevel)
@@ -136,119 +158,239 @@ public class GameManager : MonoBehaviour
             if (levelIndex >= SceneManager.sceneCountInBuildSettings) break;
             SetLevelButtonAndAddLevel(button, levelIndex, isGameplayLevel);
         }
-
-        foreach (LevelUnlocked levelUnlocked in levelsUnlocked)
-            Debug.Log(levelUnlocked.IsUnlocked);
     }
 
     public void SetLevelButtonAndAddLevel(Button button, int levelIndex, bool isGameplayLevel)
     {
         if (button == null) return;
 
+        AddLevelNode(new GameplayLevel(levelIndex));
+        StartCoroutine(SetMainLevelButton(button, levelIndex));
+    }
+
+    private IEnumerator SetMainLevelButton(Button button, int levelIndex)
+    {
+        LevelNode currentNode = defaultLevel;
         button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() =>
-        {
-            LoadLevel(levelIndex);
-        });
 
-        if (isGameplayLevel)
-            AddGameplayLevel(levelIndex);
+        while (currentNode != null)
+        {
+            if(currentNode.mainLevel != null)
+            {
+                if (currentNode.mainLevel.LevelIndex == levelIndex && button != null)
+                {
+
+                    currentNode.mainLevel.Unlock();
+                    button.onClick.AddListener(() =>
+                    {
+                        LoadLevel(currentNode.mainLevel);
+                    });
+
+                    button.interactable = currentNode.mainLevel.IsUnlocked;
+                    Debug.Log(currentNode.mainLevel.IsUnlocked);
+                    break;
+                }
+            }
+
+            currentNode = currentNode.next;
+            yield return null;
+        }
+    }
+
+    private IEnumerator SetSecretLevelButton(Button button, int levelIndex)
+    {
+        LevelNode currentNode = defaultLevel;
+        button.onClick.RemoveAllListeners();
+
+        while (currentNode != null)
+        {
+            if (currentNode.mainLevel != null)
+            {
+                if (currentNode.mainLevel.LevelIndex == levelIndex)
+                {
+
+                    currentNode.mainLevel.Unlock();
+                    button.onClick.AddListener(() =>
+                    {
+                        LoadLevel(currentNode.mainLevel);
+                    });
+
+                    button.interactable = currentNode.mainLevel.IsUnlocked;
+                    Debug.Log(currentNode.mainLevel.IsUnlocked);
+                    break;
+                }
+            }
+
+            currentNode = currentNode.next;
+            yield return null;
+        }
+    }
+
+    private IEnumerator LoadAndUnlockNextMainLevel(int levelIndex)
+    {
+        LevelNode currentNode = defaultLevel;
+
+        while (currentNode != null)
+        {
+            if (currentNode.mainLevel != null)
+            {
+                if (currentNode.mainLevel.LevelIndex == levelIndex)
+                {
+                    currentNode.mainLevel.SetUnlockedState(true);
+                    LoadLevel(currentNode.mainLevel);
+                    break;
+                }
+            }
+
+            currentNode = currentNode.next;
+            yield return null;
+        }
+    }
+
+    public void AddLevelNode(GameplayLevel gameplayLevel)
+    {
+        AddLevelNode(gameplayLevel, null);
+    }
+
+    private void AddLevelNode(GameplayLevel gameplayLevel, SecretLevel secretLevel)
+    {
+        if (gameplayLevel == null) return;
+        LevelNode nextNode = new LevelNode(gameplayLevel, secretLevel);
+
+        if (defaultLevel == null)
+        {
+            defaultLevel = nextNode;
+        }
         else
-            AddSecretLevel(levelIndex);
-
-        bool isLevelUnlocked = IsLevelUnlocked(levelIndex);
-
-        Debug.Log(isLevelUnlocked);
-
-        button.interactable = isLevelUnlocked;
-        if (!isGameplayLevel) button.gameObject.SetActive(isLevelUnlocked);
-    }
-
-    private void AddGameplayLevel(int levelIndex)
-    {
-        LevelUnlocked level = null;
-
-        if (!TryGetLevel(levelIndex, ref level) && levelsUnlocked != null)
-            AddLevel(new GameplayLevel(levelIndex, defaultLevelsUnlocked.Contains(levelIndex)));
-    }
-
-    private void AddSecretLevel(int levelIndex)
-    {
-        LevelUnlocked level = null;
-
-        if (!TryGetLevel(levelIndex, ref level) && levelsUnlocked != null)
-            AddLevel(new SecretLevel(levelIndex, 1, defaultLevelsUnlocked.Contains(levelIndex)));
-    }
-
-    private void AddLevel(GameplayLevel level)
-    {
-        if (level != null)
         {
-            if (level.IsUnlocked)
-                level.Unlock();
-
-            levelsUnlocked.Add(level);
+            AddLevelNode(defaultLevel, nextNode);
         }
     }
-    private void AddLevel(SecretLevel level)
+    private void AddLevelNode(LevelNode currentLevelNode, LevelNode nextNode)
     {
-        if (level != null)
+        if (currentLevelNode.next != null)
         {
-            if (level.IsUnlocked)
-                level.Unlock();
-
-            levelsUnlocked.Add(level);
+            AddLevelNode(currentLevelNode.next, nextNode);
+        }
+        else
+        {
+            currentLevelNode.next = nextNode;
         }
     }
 
-    public void RemoveLevel(int levelIndex)
+    public void RemoveLevelNode(int sceneIndex)
     {
-        foreach (LevelUnlocked levelUnlocked in levelsUnlocked)
+        if (sceneIndex >= SceneManager.sceneCountInBuildSettings) return;
+        RemoveLevelNode(sceneIndex, defaultLevel);
+    }
+    public void RemoveLevelNode(int sceneIndex, LevelNode node)
+    {
+        if (node != null)
         {
-            if (levelUnlocked.LevelIndex == levelIndex)
+            if (node.mainLevel.LevelIndex == sceneIndex)
             {
-                levelsUnlocked.Remove(levelUnlocked);
-                break;
+                node.next = null;
+            }
+            else
+            {
+                RemoveLevelNode(sceneIndex, node.next);
             }
         }
     }
 
-    public void UnlockAndLoadNextLevel()
+    public void AddSecretLevel(int sceneIndex, SecretLevel secretLevel)
     {
-        LevelUnlocked level = null;
+        if (sceneIndex >= SceneManager.sceneCountInBuildSettings) return;
+    }
 
-        if (TryGetLevel(SceneManager.GetActiveScene().buildIndex + 1, ref level))
+    public void AddSecretLevel(int sceneIndex, SecretLevel level, LevelNode node)
+    {
+        if (node != null)
         {
-            level.Unlock();
-            LoadLevel(level);
+            if (node.mainLevel == null)
+            {
+                if (node.mainLevel.LevelIndex == sceneIndex)
+                {
+                    node.secretLevel = level;
+                }
+            }
+
+            AddSecretLevel(sceneIndex, level, node.next);
+        }
+    }
+    public void RemoveSecretLevel(int sceneIndex, LevelNode node)
+    {
+        if (node != null)
+        {
+            if (node.mainLevel == null)
+            {
+                if (node.mainLevel.LevelIndex == sceneIndex)
+                {
+                    node.secretLevel = null;
+                }
+            }
+
+            RemoveLevelNode(sceneIndex, node.next);
         }
     }
 
-    public bool IsLevelUnlocked(int levelIndex)
+    private void IsMainLevelUnlocked(LevelNode node, int levelIndex, ref bool isUnlocked)
     {
-        LevelUnlocked level = null;
+        if (node != null)
+        {
+            if (node.mainLevel != null)
+            {
+                if (node.mainLevel.LevelIndex == levelIndex)
+                {
+                    isUnlocked = node.mainLevel.IsUnlocked;
+                    return;
+                }
+            }
 
-        if (TryGetLevel(levelIndex, ref level))
-            return level.IsUnlocked;
+            IsMainLevelUnlocked(node.next, levelIndex, ref isUnlocked);
+        }
 
-        return false;
+        isUnlocked = false;
     }
 
-    private bool TryGetLevel(int levelIndex, ref LevelUnlocked level)
+    public bool IsMainLevelUnlocked(int levelIndex)
     {
-        if (levelIndex < SceneManager.sceneCountInBuildSettings && levelsUnlocked.Count > 0)
-        {
-            LevelUnlocked[] levelsUnlocked = this.levelsUnlocked.Where(x => x.LevelIndex == levelIndex).ToArray();
+        bool isUnlocked = false;
+        IsMainLevelUnlocked(defaultLevel, levelIndex, ref isUnlocked);
+        return isUnlocked;
+    }
 
-            if (levelsUnlocked.Length > 0)
-            {
-                level = levelsUnlocked[0];
-                return true;
+    private void GetMainLevel(LevelNode node, int levelIndex, ref GameplayLevel level)
+    {
+        if (node != null)
+        {
+            if (node.mainLevel != null)
+            { 
+                if (node.mainLevel.LevelIndex == levelIndex)
+                {
+                    level = node.mainLevel;
+                    return;
+                }
             }
+
+            GetMainLevel(node.next, levelIndex, ref level);
         }
 
         level = null;
-        return false;
+    }
+
+    public GameplayLevel GetMainLevel(int levelIndex)
+    {
+        GameplayLevel level = null;
+        GetMainLevel(defaultLevel, levelIndex, ref level);
+        return level;
+    }
+
+
+
+    public void UnlockAndLoadNextLevel()
+    {
+        StartCoroutine(LoadAndUnlockNextMainLevel(SceneManager.GetActiveScene().buildIndex + 1));
     }
 
     public void LoadLevel(string name)
@@ -258,10 +400,15 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevel(int levelIndex)
     {
-        LevelUnlocked level = null;
+        if (defaultLevelsUnlocked.Contains(levelIndex))
+            SceneManager.LoadScene(levelIndex);
+        else
+        {
+            LevelUnlocked level = GetMainLevel(levelIndex);
 
-        if (TryGetLevel(levelIndex, ref level))
-            LoadLevel(level);
+            if (level != null)
+                LoadLevel(level);
+        }
     }
 
     private void LoadLevel(LevelUnlocked levelUnlocked)
